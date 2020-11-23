@@ -29,7 +29,7 @@ abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
     if(!comparador)
         return NULL;
 
-    abb_t* raiz_arbol = malloc(sizeof(abb_t*));
+    abb_t* raiz_arbol = malloc(sizeof(abb_t));
     if(!raiz_arbol)
         return NULL;
     raiz_arbol->comparador = comparador;
