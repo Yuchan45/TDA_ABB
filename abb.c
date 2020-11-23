@@ -15,13 +15,13 @@ abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
     if(!comparador)
         return NULL;
 
-    abb_t* arbol = malloc(sizeof(abb_t));
-    if(!arbol)
+    abb_t* raiz_arbol = malloc(sizeof(abb_t));
+    if(!raiz_arbol)
         return NULL;
-    arbol->nodo_raiz = NULL;
-    arbol->comparador = comparador;
-    arbol->destructor = destructor;
-    return arbol;
+    raiz_arbol->nodo_raiz = NULL;
+    raiz_arbol->comparador = comparador;
+    raiz_arbol->destructor = destructor;
+    return raiz_arbol;
 }
 
 /*
@@ -33,6 +33,27 @@ void arbol_destruir(abb_t* arbol){
 
 }
 
+nodo_abb_t* insertar_nodo(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
+
+    if(!nodo){
+        nodo_abb_t* nuevo_nodo = malloc(sizeof(nodo_abb_t));
+        if (!nuevo_nodo)
+            return -1;
+        nuevo_nodo->izquierda = NULL;
+        nuevo_nodo->derecha = NULL;    
+        nuevo_nodo->elemento = elemento;
+        return nuevo_nodo;
+    }
+
+    if(comparador(elemento, nodo->elemento) > 0){
+        nodo->derecha = insertar_nodo(nodo->derecha, elemento, comparador);
+    }else{ // La comparacion devuelve -1 o 0.
+        nodo->izquierda = insertar_nodo(nodo->izquierda, elemento, comparador);
+    }
+    return nodo;
+
+}
+
 /*
  * Inserta un elemento en el arbol.
  * Devuelve 0 si pudo insertar o -1 si no pudo.
@@ -40,19 +61,14 @@ void arbol_destruir(abb_t* arbol){
  */
 
 int arbol_insertar(abb_t* arbol, void* elemento){
-
     if(!arbol || !(arbol->comparador))
         return -1;
     
-    if(!(arbol->nodo_raiz)){
-        nodo_abb_t* nodo = calloc(1, sizeof(nodo_abb_t));
-        if (!nodo)
-            return -1;
-        nodo->elemento = elemento;
-        return nodo;
-    }
-    
-
+    nodo_abb_t* nodo_aux = insertar_nodo(arbol->nodo_raiz, elemento, arbol->comparador);
+    if(!nodo_aux)
+        return -1;
+    arbol->nodo_raiz = nodo_aux;
+    return 0;
 
 }
 
@@ -76,5 +92,5 @@ int arbol_borrar(abb_t* arbol, void* elemento){
 void* arbol_raiz(abb_t* arbol){
     if(!arbol)
         return NULL;
-    return arbol->nodo_raiz;
+    return arbol->nodo_raiz->elemento;
 }
