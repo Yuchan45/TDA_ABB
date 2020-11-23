@@ -33,12 +33,12 @@ void arbol_destruir(abb_t* arbol){
 
 }
 
-nodo_abb_t* insertar_nodo(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
+nodo_abb_t* nodo_insertar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
 
     if(!nodo){
         nodo_abb_t* nuevo_nodo = malloc(sizeof(nodo_abb_t));
         if (!nuevo_nodo)
-            return -1;
+            return NULL;
         nuevo_nodo->izquierda = NULL;
         nuevo_nodo->derecha = NULL;    
         nuevo_nodo->elemento = elemento;
@@ -46,9 +46,9 @@ nodo_abb_t* insertar_nodo(nodo_abb_t* nodo, void* elemento, abb_comparador compa
     }
 
     if(comparador(elemento, nodo->elemento) > 0){
-        nodo->derecha = insertar_nodo(nodo->derecha, elemento, comparador);
+        nodo->derecha = nodo_insertar(nodo->derecha, elemento, comparador);
     }else{ // La comparacion devuelve -1 o 0.
-        nodo->izquierda = insertar_nodo(nodo->izquierda, elemento, comparador);
+        nodo->izquierda = nodo_insertar(nodo->izquierda, elemento, comparador);
     }
     return nodo;
 
@@ -64,7 +64,7 @@ int arbol_insertar(abb_t* arbol, void* elemento){
     if(!arbol || !(arbol->comparador))
         return -1;
     
-    nodo_abb_t* nodo_aux = insertar_nodo(arbol->nodo_raiz, elemento, arbol->comparador);
+    nodo_abb_t* nodo_aux = nodo_insertar(arbol->nodo_raiz, elemento, arbol->comparador);
     if(!nodo_aux)
         return -1;
     arbol->nodo_raiz = nodo_aux;
