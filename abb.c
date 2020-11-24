@@ -3,14 +3,6 @@
 #include <stdlib.h>
 
 
-/*
- * Crea el arbol y reserva la memoria necesaria de la estructura.
- * Comparador se utiliza para comparar dos elementos.
- * Destructor es invocado sobre cada elemento que sale del arbol,
- * puede ser NULL indicando que no se debe utilizar un destructor.
- *
- * Devuelve un puntero al arbol creado o NULL en caso de error.
- */
 abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
     if(!comparador)
         return NULL;
@@ -54,14 +46,8 @@ nodo_abb_t* nodo_insertar(nodo_abb_t* nodo, void* elemento, abb_comparador compa
 
 }
 
-/*
- * Inserta un elemento en el arbol.
- * Devuelve 0 si pudo insertar o -1 si no pudo.
- * El arbol admite elementos con valores repetidos.
- */
-
 int arbol_insertar(abb_t* arbol, void* elemento){
-    if(!arbol || !(arbol->comparador))
+    if(!arbol || !(arbol->comparador)) //Creeeo que no hace falta fijarse si esta el comparador, de eso se encarga arbol_crear().
         return -1;
     
     nodo_abb_t* nodo_aux = nodo_insertar(arbol->nodo_raiz, elemento, arbol->comparador);
@@ -71,6 +57,42 @@ int arbol_insertar(abb_t* arbol, void* elemento){
     return 0;
 
 }
+
+void* nodo_buscar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
+    if(!comparador)
+        return NULL;
+
+    if(!nodo)  // Si no encuentra nada devuelve nada.
+        return NULL;
+    int comparacion = comparador(elemento, nodo->elemento);
+
+    if(comparacion == 0) // Si encuentra.
+        return nodo->elemento;
+    if(comparacion > 0){
+        return nodo_buscar(nodo->derecha, elemento, comparador);
+    }else{
+        return nodo_buscar(nodo->izquierda, elemento, comparador);
+    }
+
+}
+
+
+/*
+ * Busca en el arbol un elemento igual al provisto (utilizando la
+ * funcion de comparación).
+ *
+ * Devuelve el elemento encontrado o NULL si no lo encuentra.
+ */
+void* arbol_buscar(abb_t* arbol, void* elemento){
+    if(!arbol || !(arbol->comparador))
+        return NULL;
+    
+    void* elemento_buscado = nodo_buscar(arbol->nodo_raiz, elemento, arbol->comparador);
+
+    return elemento_buscado;
+}
+
+
 
 /*
  * Busca en el arbol un elemento igual al provisto (utilizando la
@@ -93,4 +115,14 @@ void* arbol_raiz(abb_t* arbol){
     if(!arbol)
         return NULL;
     return arbol->nodo_raiz->elemento;
+}
+
+/*
+ * Determina si el árbol está vacío.
+ * Devuelve true si está vacío o el arbol es NULL, false si el árbol tiene elementos.
+ */
+bool arbol_vacio(abb_t* arbol){
+    if(!arbol || !(arbol->nodo_raiz))
+        return true;
+    return false;
 }
