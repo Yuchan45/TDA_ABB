@@ -110,6 +110,43 @@ void probar_buscar_en_arbol(){
 
 }
 
+void probar_borrar_en_arbol(){
+
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    pa2m_afirmar(arbol_borrar(arbol, NULL) == -1, "No deberia poder borrar en un arbol vacío");
+    pa2m_afirmar(arbol_borrar(NULL, NULL) == -1, "No deberia poder borrar si recibe un arbol nulo");
+
+    int a = 5, b = 3, c = 7;
+    //, d = 2, e = 4, f = 6, g = 8;
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    /*
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);*/
+    printf(" -Inserto 7 elementos.-\n");
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+
+    int h = 9;
+    pa2m_afirmar(arbol_borrar(arbol, &h) == -1, "No puedo borrar una elemento que no esta en el arbol.");
+    printf("%i\n", *(int*)arbol->nodo_raiz->izquierda->izquierda->elemento);
+    pa2m_afirmar(arbol_borrar(arbol, &b) == 0, "Puedo borrar una hoja.");
+    //pa2m_afirmar(arbol->nodo_raiz->izquierda->izquierda == NULL, "El padre de la hoja borrada apunta a NULL");
+
+
+
+
+}
+
+
 int main(){
     /*PRUEBAS*/
 
@@ -121,6 +158,9 @@ int main(){
 
     pa2m_nuevo_grupo("PRUEBAS DE BUSQUEDA");
     probar_buscar_en_arbol();
+
+    pa2m_nuevo_grupo("PRUEBAS DE BORRADO");
+    probar_borrar_en_arbol();
 
     return pa2m_mostrar_reporte();
 } 
