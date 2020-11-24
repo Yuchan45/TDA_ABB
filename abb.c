@@ -85,7 +85,50 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
     return elemento_buscado;
 }
 
+nodo_abb_t* hallar_nodo_maximo(nodo_abb_t* arbol){
+    // A esta funcion, le pasas el nodo hijo izquierdo y lo que hace es recorrer todo el lado derecho del hijo y retorna el ultimo(maximo) nodo del lado derecho.
+    if(!arbol)
+        return NULL;
+    if(arbol->derecha){
+        return hallar_nodo_maximo(arbol->derecha); //Si tiene hijo derecho, segui.
+    }else{
+        return arbol; // Halle el maximo.
+    }
+}
 
+void nodo_borrar(nodo_abb_t* nodo_a_borrar, abb_liberar_elemento destructor){
+    if(nodo_a_borrar->izquierda && nodo_a_borrar->derecha){ // El nodo tiene dos hijos
+        nodo_abb_t* mayor = hallar_nodo_maximo(nodo_a_borrar->izquierda); // Le paso el hijo izquierdo porque se debe hacer en inorden.
+        nodo_a_borrar->elemento = mayor->elemento; //Piso el elemento a borrar con la hoja maxima.
+        nodo_borrar(mayor, destructor);
+        if(destructor)
+            destructor(nodo_a_borrar->elemento);
+        free(nodo_a_borrar);
+    }else if(nodo_a_borrar->izquierda){ //Si el nodo a eliminar tiene un hijo izquierdo.
+
+    }
+
+
+
+}
+
+int hallar_nodo_a_borrar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador, abb_liberar_elemento destructor){
+    if(!nodo || !comparador)
+        return -1;
+
+    if(comparador(nodo->elemento, elemento) < 0){ // Si el valor es menor
+        nodo->izquierda = hallar_nodo_a_borrar(nodo->izquierda, elemento, comparador, destructor); // Busca por la izquierda
+    }else if(comparador(nodo->elemento, elemento) > 0) { // Si el valor es mayor
+        nodo->derecha = hallar_nodo_a_borrar(nodo->derecha, elemento, comparador, destructor); // Busca por la derecha
+
+    }else{ // Encontre el elemento
+        nodo_borrar(nodo, destructor);
+    }
+
+
+
+    return 0;
+}
 
 /*
  * Busca en el arbol un elemento igual al provisto (utilizando la
@@ -94,10 +137,15 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
  * dicho elemento.
  * Devuelve 0 si pudo eliminar el elemento o -1 en caso contrario.
  */
-/*
-int arbol_borrar(abb_t* arbol, void* elemento){
 
-}*/
+int arbol_borrar(abb_t* arbol, void* elemento){
+    if(!arbol || !(arbol->comparador)) 
+        return -1;
+    
+    int devolver = hallar_nodo_a_borrar(arbol->nodo_raiz, elemento, arbol->comparador, arbol->destructor);
+
+    return devolver;
+}
 
 
 void* arbol_raiz(abb_t* arbol){
