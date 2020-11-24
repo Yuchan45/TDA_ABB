@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "pa2mm.h"
 
+/*               COMPARADORES Y DESTRUCTORES                */
 typedef struct{
     size_t tamanio;
     bool arenosa;
@@ -16,12 +17,20 @@ int comparar_manzanas_por_peso(void* manzana_1, void* manzana_2){
     return 0;
 }
 
+void destructor_de_manzanas(void* manzana){
+    free((manzana_t*)manzana);
+}
+
 int comparador_numeros(void* elemento_1, void* elemento_2){
     if ( (*(int*)elemento_1) > (*(int*)elemento_2) )
         return 1;
     if ( (*(int*)elemento_1) < (*(int*)elemento_2) )
         return -1;
     return 0;
+}
+
+void destructor_de_numeros(void* numero){
+    free((int*)numero);
 }
 
 void destructor(void* elemento){

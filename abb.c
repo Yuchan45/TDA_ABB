@@ -76,13 +76,6 @@ void* nodo_buscar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
 
 }
 
-
-/*
- * Busca en el arbol un elemento igual al provisto (utilizando la
- * funcion de comparación).
- *
- * Devuelve el elemento encontrado o NULL si no lo encuentra.
- */
 void* arbol_buscar(abb_t* arbol, void* elemento){
     if(!arbol || !(arbol->comparador))
         return NULL;
@@ -107,20 +100,12 @@ int arbol_borrar(abb_t* arbol, void* elemento){
 }*/
 
 
-/*
- * Devuelve el elemento almacenado como raiz o NULL si el árbol está
- * vacío o no existe.
- */
 void* arbol_raiz(abb_t* arbol){
     if(!arbol)
         return NULL;
     return arbol->nodo_raiz->elemento;
 }
 
-/*
- * Determina si el árbol está vacío.
- * Devuelve true si está vacío o el arbol es NULL, false si el árbol tiene elementos.
- */
 bool arbol_vacio(abb_t* arbol){
     if(!arbol || !(arbol->nodo_raiz))
         return true;
