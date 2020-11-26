@@ -149,3 +149,32 @@ bool arbol_vacio(abb_t* arbol){
         return true;
     return false;
 }
+
+
+
+void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
+    // Recorro los nodos y los voy cerrando de atras para adelante. Si no tengo hijos borro, si puedo avanar para izq avanzo, y si puedo avanzar para drcha avanzo.
+    if (!nodo)
+        return;
+    nodo_liberar(nodo->izquierda, destructor);
+    nodo_liberar(nodo->derecha, destructor);
+    if (destructor)
+        destructor(nodo->elemento);
+    free(nodo);
+    
+}
+
+
+/*
+ * Destruye el arbol liberando la memoria reservada por el mismo.
+ * Adicionalmente invoca el destructor con cada elemento presente en
+ * el arbol.
+ */
+void arbol_destruir(abb_t* arbol){
+    if (!arbol)
+        return;
+
+    nodo_liberar(arbol->nodo_raiz, arbol->destructor);
+    free(arbol);
+
+}
