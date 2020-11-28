@@ -16,14 +16,6 @@ abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
     return raiz_arbol;
 }
 
-/*
- * Destruye el arbol liberando la memoria reservada por el mismo.
- * Adicionalmente invoca el destructor con cada elemento presente en
- * el arbol.
- */
-void arbol_destruir(abb_t* arbol){
-
-}
 
 nodo_abb_t* nodo_insertar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
 
@@ -85,44 +77,84 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
     return elemento_buscado;
 }
 
-nodo_abb_t* hallar_nodo_maximo(nodo_abb_t* nodo){
+nodo_abb_t* hallar_nodo_extremo_derecho(nodo_abb_t* nodo){
     // A esta funcion, le pasas el nodo hijo izquierdo y lo que hace es recorrer todo el lado derecho del hijo y retorna el ultimo(maximo) nodo del lado derecho.
     if(!nodo)
         return NULL;
     if(nodo->derecha){
-        return hallar_nodo_maximo(nodo->derecha); //Si tiene hijo derecho, segui.
+        return hallar_nodo_extremo_derecho(nodo->derecha); //Si tiene hijo derecho, segui.
     }else{
         return nodo; // Halle el maximo.
     }
 }
 
+nodo_abb_t* borrar_con_dos_hijos(nodo_abb_t* nodo, abb_liberar_elemento destructor){
+    nodo_abb_t* nodo_aux = nodo;
+    nodo_abb_t* nodo_extremo = hallar_nodo_extremo_derecho(nodo->izquierda);
+    if (nodo_extremo){
+        nodo->izquierda->derecha = NULL; // Elimino el nodo que extremo que recoloco.
+        nodo_extremo->izquierda = nodo_aux->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
+        nodo_extremo->derecha = nodo_aux->derecha;
+        nodo_aux = nodo_extremo;
 
+    }else{ 
+        nodo_aux->izquierda->derecha = nodo->derecha;
+        //nodo->izquierda->derecha = nodo->derecha;
+    }
+
+    if (destructor)
+        destructor(nodo->elemento);
+    free(nodo);
+    return nodo_aux;
+
+}
+
+nodo_abb_t* borrar_hoja(nodo_abb_t* nodo, abb_liberar_elemento destructor){
+    if (destructor)
+        destructor(nodo->elemento);
+    free(nodo);
+    return NULL;
+}
+
+nodo_abb_t* borrar_un_hijo(nodo_abb_t* nodo, abb_liberar_elemento destructor){
+    nodo_abb_t* hijo;
+    if (nodo->izquierda){
+        hijo = nodo->izquierda;
+    }else{
+        hijo = nodo->derecha;
+    }
+    if (destructor)
+        destructor(nodo->elemento);
+    free(nodo);
+    
+    return hijo;
+}
 
 nodo_abb_t* nodo_borrar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador, abb_liberar_elemento destructor, bool* resultado){
-
     if(!nodo || !comparador)
         return NULL;
 
     int comparacion = comparador(elemento, nodo->elemento);
-    if(comparacion == -1){ //Me muevo para la izquierda
-        nodo->izquierda = borrar_nodo(nodo->izquierda, comparador, destructor, elemento, resultado);
-
-    }else if(comparacion == 1){ //Me muevo para la derecha
-        nodo->derecha = borrar_nodo(nodo->derecha, comparador, destructor, elemento, resultado);
-
-    }else{
+    if(comparacion == 0){ //Lo encontre
         *resultado = true;
         if(nodo->izquierda && nodo->derecha){
             return borrar_con_dos_hijos(nodo, destructor);
-        } else if (nodo->izquierda || nodo->derecha){
-            return borrar_con_un_hijo(nodo, destructor);
-        } else {
-            return borrar_sin_hijos(nodo, destructor);
+
+        }else if (nodo->izquierda || nodo->derecha){
+            return borrar_un_hijo(nodo, destructor);
+
+        }else{
+            return borrar_hoja(nodo, destructor);
         }
+
+    }else if(comparacion == 1){ //Me muevo para la derecha
+        nodo->derecha = nodo_borrar(nodo->derecha, elemento, comparador, destructor, resultado);
+
+    }else{ // Comparacion = -1, me muevo a la izquierda.
+        nodo->izquierda = nodo_borrar(nodo->izquierda, elemento, comparador, destructor, resultado);
+
     }
     return nodo;
-
-
 
 }
 
