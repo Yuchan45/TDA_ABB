@@ -193,7 +193,7 @@ void insertar_elementos_inorden(nodo_abb_t* nodo, void** array, size_t tamanio_a
         return;
 
     insertar_elementos_inorden(nodo->izquierda, array, tamanio_array, elementos_insertados);
-    if (*elementos_insertados <= tamanio_array){
+    if (*elementos_insertados < tamanio_array){
         //printf("hola\n");
         array[*elementos_insertados] = nodo->elemento;
         (*elementos_insertados) ++;
@@ -201,14 +201,6 @@ void insertar_elementos_inorden(nodo_abb_t* nodo, void** array, size_t tamanio_a
     insertar_elementos_inorden(nodo->derecha, array, tamanio_array, elementos_insertados);
 }
 
-/*
- * Llena el array del tamaño dado con los elementos de arbol
- * en secuencia inorden.
- * Devuelve la cantidad de elementos del array que pudo llenar (si el
- * espacio en el array no alcanza para almacenar todos los elementos,
- * llena hasta donde puede y devuelve la cantidad de elementos que
- * pudo poner).
- */
 size_t arbol_recorrido_inorden(abb_t* arbol, void** array, size_t tamanio_array){
     if (arbol_vacio(arbol) || !array || tamanio_array == 0)
         return 0;
@@ -219,7 +211,70 @@ size_t arbol_recorrido_inorden(abb_t* arbol, void** array, size_t tamanio_array)
     return elementos_insertados;
 }
 
+void insertar_elementos_preorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
+    // (NID)
+    if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
+        return;
 
+    if (*elementos_insertados < tamanio_array){
+        //printf("hola\n");
+        array[*elementos_insertados] = nodo->elemento;
+        (*elementos_insertados) ++;
+    }
+    insertar_elementos_preorden(nodo->izquierda, array, tamanio_array, elementos_insertados);
+    insertar_elementos_preorden(nodo->derecha, array, tamanio_array, elementos_insertados);
+}
+
+
+size_t arbol_recorrido_preorden(abb_t* arbol, void** array, size_t tamanio_array){
+    if (arbol_vacio(arbol) || !array || tamanio_array == 0)
+        return 0;
+    size_t elementos_insertados = 0;
+
+    insertar_elementos_preorden(arbol->nodo_raiz, array, tamanio_array, &elementos_insertados);
+
+    return elementos_insertados;
+}
+
+
+void insertar_elementos_postorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
+    // (IDN)
+    if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
+        return;
+
+    insertar_elementos_postorden(nodo->izquierda, array, tamanio_array, elementos_insertados);
+    insertar_elementos_postorden(nodo->derecha, array, tamanio_array, elementos_insertados);
+    if (*elementos_insertados < tamanio_array){
+        //printf("hola\n");
+        array[*elementos_insertados] = nodo->elemento;
+        (*elementos_insertados) ++;
+    }
+}
+
+size_t arbol_recorrido_postorden(abb_t* arbol, void** array, size_t tamanio_array){
+    if (arbol_vacio(arbol) || !array || tamanio_array == 0)
+        return 0;
+    size_t elementos_insertados = 0;
+
+    insertar_elementos_postorden(arbol->nodo_raiz, array, tamanio_array, &elementos_insertados);
+
+    return elementos_insertados;
+}
+
+/*
+ * Iterador interno. Recorre el arbol e invoca la funcion con cada
+ * elemento del mismo. El puntero 'extra' se pasa como segundo
+ * parámetro a la función. Si la función devuelve true, se finaliza el
+ * recorrido aun si quedan elementos por recorrer. Si devuelve false
+ * se sigue recorriendo mientras queden elementos.
+ * El recorrido se realiza de acuerdo al recorrido solicitado.  Los
+ * recorridos válidos son: ABB_RECORRER_INORDEN, ABB_RECORRER_PREORDEN
+ * y ABB_RECORRER_POSTORDEN.
+ * Devuelve la cantidad de elementos que fueron recorridos.
+*/
+size_t abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*, void*), void* extra){
+    
+}
 
 void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
     // Recorro los nodos y los voy cerrando de atras para adelante. Si no tengo hijos borro, si puedo avanar para izq avanzo, y si puedo avanzar para drcha avanzo.

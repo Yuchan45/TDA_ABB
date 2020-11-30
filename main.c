@@ -217,24 +217,106 @@ void probar_borrar_en_arbol(){
 }
 
 void mostrar_array_de_numeros(void** array, int cantidad){
+    printf("ASI QUEDARIA EL ARRAY: \n");
+    printf("    [ ");
     for (int i = 0; i < cantidad; i++){
-        printf("%i, ", *(int*)array[i]);
+        printf("%i  ", *(int*)array[i]);
     }
+    printf("]\n");
 }
 
 void probar_arbol_recorrido_inorden(){
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
-    int a = 5, b = 3, c = 6;
-    void* array[10];
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+    void* array[10]; // [2, 3, 4, 5, 6, 7, 8] Asi deberia quedar.
+
     pa2m_afirmar(arbol_recorrido_inorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
     pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
-    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.");
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
+    printf("-Inserte 7 elementos en el arbol.\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
 
-    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 3) == 3, "Recorre todos los elementos. (Hay 3 en el arbol)");
-    mostrar_array_de_numeros(array, 3);
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 2) == 2, "Si el tamanio del array es de 2 y le hago recorrer un arbol con 7 elementos, guarda solo 2.");
+    mostrar_array_de_numeros(array, 2);
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 30) == 7, "Si el tamanio del array es de 30 y le hago recorrer un arbol de 7 elementos, guarda los 7.");
+    mostrar_array_de_numeros(array, 7);
+
+    arbol_destruir(arbol);
+}
+
+void probar_arbol_recorrido_preorden(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+    void* array[10]; // [5, 3, 2, 4, 7, 6, 8] Asi deberia quedar.
+
+    pa2m_afirmar(arbol_recorrido_preorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
+    pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
+    pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
+    printf("-Inserte 7 elementos en el arbol.\n");
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+
+    pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 2) == 2, "Si el tamanio del array es de 2 y le hago recorrer un arbol con 7 elementos, guarda solo 2.");
+    mostrar_array_de_numeros(array, 2);
+    pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 30) == 7, "Si el tamanio del array es de 30 y le hago recorrer un arbol de 7 elementos, guarda los 7.");
+    mostrar_array_de_numeros(array, 7);
+
+    arbol_destruir(arbol);
+}
+
+void probar_arbol_recorrido_postorden(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+    void* array[10]; // [2, 4, 3, 6, 8, 7, 5] Asi deberia quedar.
+
+    pa2m_afirmar(arbol_recorrido_postorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
+    pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
+    pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
+    printf("-Inserte 7 elementos en el arbol.\n");
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+
+    pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 2) == 2, "Si el tamanio del array es de 2 y le hago recorrer un arbol con 7 elementos, guarda solo 2.");
+    mostrar_array_de_numeros(array, 2);
+    pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 30) == 7, "Si el tamanio del array es de 30 y le hago recorrer un arbol de 7 elementos, guarda los 7.");
+    mostrar_array_de_numeros(array, 7);
 
     arbol_destruir(arbol);
 }
@@ -260,6 +342,10 @@ int main(){
     probar_borrar_nodo_con_dos_hijos_arboles();
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO INORDEN");
     probar_arbol_recorrido_inorden();
+    pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO PREORDEN");
+    probar_arbol_recorrido_preorden();
+    pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO POSTORDEN");
+    probar_arbol_recorrido_postorden();
 
     return pa2m_mostrar_reporte();
 } 
