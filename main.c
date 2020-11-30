@@ -216,6 +216,29 @@ void probar_borrar_en_arbol(){
     arbol_destruir(arbol);
 }
 
+void mostrar_array_de_numeros(void** array, int cantidad){
+    for (int i = 0; i < cantidad; i++){
+        printf("%i, ", *(int*)array[i]);
+    }
+}
+
+void probar_arbol_recorrido_inorden(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5, b = 3, c = 6;
+    void* array[10];
+    pa2m_afirmar(arbol_recorrido_inorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.");
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+
+    pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 3) == 3, "Recorre todos los elementos. (Hay 3 en el arbol)");
+    mostrar_array_de_numeros(array, 3);
+
+    arbol_destruir(arbol);
+}
+
 
 int main(){
     /*PRUEBAS*/
@@ -235,6 +258,8 @@ int main(){
     probar_borrar_nodo_con_dos_hijos_hojas();
     pa2m_nuevo_grupo("PRUEBAS DE BORRADO CON NODO DE DOS HIJOS ARBOLES");
     probar_borrar_nodo_con_dos_hijos_arboles();
+    pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO INORDEN");
+    probar_arbol_recorrido_inorden();
 
     return pa2m_mostrar_reporte();
 } 

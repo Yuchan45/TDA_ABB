@@ -187,6 +187,38 @@ bool arbol_vacio(abb_t* arbol){
     return false;
 }
 
+void insertar_elementos_inorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
+    // (IND)
+    if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
+        return;
+
+    insertar_elementos_inorden(nodo->izquierda, array, tamanio_array, elementos_insertados);
+    if (*elementos_insertados <= tamanio_array){
+        //printf("hola\n");
+        array[*elementos_insertados] = nodo->elemento;
+        (*elementos_insertados) ++;
+    }
+    insertar_elementos_inorden(nodo->derecha, array, tamanio_array, elementos_insertados);
+}
+
+/*
+ * Llena el array del tamaño dado con los elementos de arbol
+ * en secuencia inorden.
+ * Devuelve la cantidad de elementos del array que pudo llenar (si el
+ * espacio en el array no alcanza para almacenar todos los elementos,
+ * llena hasta donde puede y devuelve la cantidad de elementos que
+ * pudo poner).
+ */
+size_t arbol_recorrido_inorden(abb_t* arbol, void** array, size_t tamanio_array){
+    if (arbol_vacio(arbol) || !array || tamanio_array == 0)
+        return 0;
+    size_t elementos_insertados = 0;
+
+    insertar_elementos_inorden(arbol->nodo_raiz, array, tamanio_array, &elementos_insertados);
+
+    return elementos_insertados;
+}
+
 
 
 void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
