@@ -89,16 +89,21 @@ nodo_abb_t* hallar_nodo_extremo_derecho(nodo_abb_t* nodo){
 }
 
 nodo_abb_t* borrar_con_dos_hijos(nodo_abb_t* nodo, abb_liberar_elemento destructor){
-    nodo_abb_t* nodo_aux = nodo;
-    nodo_abb_t* nodo_extremo = hallar_nodo_extremo_derecho(nodo->izquierda);
-    if (nodo_extremo){
-        nodo->izquierda->derecha = NULL; // Elimino el nodo que extremo que recoloco.
-        nodo_extremo->izquierda = nodo_aux->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
-        nodo_extremo->derecha = nodo_aux->derecha;
+    nodo_abb_t* nodo_aux = nodo->izquierda;
+    //printf("%i\n", *(int*)nodo_aux->elemento);
+
+    if (nodo_aux->derecha != NULL){
+        //printf("asdasdas\n\n\n");
+        nodo_abb_t* nodo_extremo = hallar_nodo_extremo_derecho(nodo->izquierda);
+        nodo->izquierda->derecha = NULL; // Elimino el nodo/arbol extremo que recoloco.
+        nodo_extremo->izquierda = nodo->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
+        nodo_extremo->derecha = nodo->derecha;
         nodo_aux = nodo_extremo;
 
     }else{ 
-        nodo_aux->izquierda->derecha = nodo->derecha;
+        //printf("%i\n", *(int*)nodo_aux->elemento);
+        nodo_aux->derecha = nodo->derecha;
+
         //nodo->izquierda->derecha = nodo->derecha;
     }
 
@@ -196,12 +201,6 @@ void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
     
 }
 
-
-/*
- * Destruye el arbol liberando la memoria reservada por el mismo.
- * Adicionalmente invoca el destructor con cada elemento presente en
- * el arbol.
- */
 void arbol_destruir(abb_t* arbol){
     if (!arbol)
         return;

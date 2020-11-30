@@ -47,6 +47,7 @@ void probar_crear_arbol(){
     pa2m_afirmar(arbol->destructor == &destructor_de_numeros, "El destructor del árbol apunta al destructor recibido");
     
     //Faltan los free.
+    arbol_destruir(arbol);
 }
 
 void probar_insertar_en_arbol(){
@@ -82,7 +83,7 @@ void probar_insertar_en_arbol(){
     pa2m_afirmar(comparador_numeros(arbol->nodo_raiz->derecha->izquierda->elemento, &f) == 0, "El elemento '6' se inserto correctamente.");
     pa2m_afirmar(comparador_numeros(arbol->nodo_raiz->derecha->derecha->elemento, &g) == 0, "El elemento '8' se inserto correctamente.");
 
-
+    arbol_destruir(arbol);
 }
 
 void probar_buscar_en_arbol(){
@@ -104,10 +105,10 @@ void probar_buscar_en_arbol(){
     pa2m_afirmar(arbol_buscar(arbol, &quinta_manzana) == NULL, "No deberia poder encontrar una manzana que no esta en el arbol.");
     pa2m_afirmar(arbol_buscar(arbol, &manzana_buscada) == &manzana, "Encuentro la manzana buscada porque tiene el mismo peso que la 1ª manzana.");
     // Pude encontrar la manzana buscada porque el comparador asociado al arbol se fija solo en el peso. Y como la manzana buscada y la manzana tienen el mismo peso..
-
+    arbol_destruir(arbol);
 }
-void probar_borrar_en_arbol_2(){
-    printf("\n-Pruebo borrar un nodo con 2 hijos (y cuyo hijo izquierdo tiene uno o mas hijos derechos.)");
+void probar_borrar_nodo_con_dos_hijos_arboles(){
+    //printf("\n-Pruebo borrar un nodo con 2 hijos (y cuyo hijo izquierdo tiene uno o mas hijos derechos.)");
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
     int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
     arbol_insertar(arbol, &a);
@@ -117,7 +118,7 @@ void probar_borrar_en_arbol_2(){
     arbol_insertar(arbol, &e);
     arbol_insertar(arbol, &f);
     arbol_insertar(arbol, &g);
-    printf("\n-Inserto 7 elementos.-\n");
+    printf("-Inserto 7 elementos.-\n");
     /*          COMO QUEDARIA EL ARBOL
                         a- 5
                     /           \
@@ -136,9 +137,22 @@ void probar_borrar_en_arbol_2(){
             d- 2             f- 6    g- 8    
     */
 
+   arbol_destruir(arbol);
+}   
+void probar_borrar_nodo_con_dos_hijos_hojas(){
+    //printf("\n-Pruebo borrar un nodo con 2 hijos (hijos hojas)\n");
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5, b = 3, c = 6;
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
 
+    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "-Puedo borrar un nodo con dos hijos.");
+    pa2m_afirmar(arbol->nodo_raiz->elemento == &b, "El hijo izquierdo se convierte en raiz.");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &c, "La raiz (5) apunta al nodo que contiene al elemento (6).");
+
+    arbol_destruir(arbol);
 }
-
 void probar_borrar_en_arbol(){
 
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
@@ -166,7 +180,7 @@ void probar_borrar_en_arbol(){
                 /   \           /   \
             d- 2    e- 4    f- 6    g- 8    
     */
-
+   
     int h = 9;
     pa2m_afirmar(arbol_borrar(arbol, &h) == -1, "No puedo borrar una elemento que no esta en el arbol.");
 
@@ -174,12 +188,6 @@ void probar_borrar_en_arbol(){
     pa2m_afirmar(arbol->nodo_raiz->izquierda->izquierda == NULL, "El puntero del padre de la hoja borrada apunta a NULL");
     pa2m_afirmar(arbol_borrar(arbol, &g) == 0, "-Puedo borrar otra hoja.");
     pa2m_afirmar(arbol->nodo_raiz->derecha->derecha == NULL, "El puntero del padre de la otra hoja borrada apunta a NULL");
-
-    //pa2m_afirmar(arbol->nodo_raiz->elemento == &a, "a");
-    //pa2m_afirmar(arbol->nodo_raiz->izquierda->elemento == &b, "b");
-    //pa2m_afirmar(arbol->nodo_raiz->izquierda->derecha->elemento == &e, "e");
-    //pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &c, "c");
-    //pa2m_afirmar(arbol->nodo_raiz->derecha->izquierda->elemento == &f, "f");
     
     // Ya borre la d y la g.
     /*          COMO QUEDARIA EL ARBOL
@@ -189,52 +197,23 @@ void probar_borrar_en_arbol(){
                     \           /   
                     e- 4    f- 6      
     */
+   
     pa2m_afirmar(arbol_borrar(arbol, &c) == 0, "-Puedo borrar un nodo con un hijo izquierdo.");
     pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &f, "El elemento hijo del nodo borrado toma el lugar del elemento borrado.");
     pa2m_afirmar(arbol_borrar(arbol, &b) == 0, "-Puedo borrar un nodo con un hijo derecho.");
     pa2m_afirmar(arbol->nodo_raiz->izquierda->elemento == &e, "El elemento hijo del nodo borrado toma el lugar del elemento borrado.");
-    
-    //pa2m_afirmar(arbol->nodo_raiz->elemento == &a, "a");
-    //pa2m_afirmar(arbol->nodo_raiz->izquierda->elemento == &e, "e");
-    //pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &f, "f");
 
     /*          COMO QUEDARIA EL ARBOL
                         a- 5
                     /           \
                 e- 4            f- 6                             
-    */
+    *//*
     printf("\n-Ahora lo que queda es un nodo con dos hijos nada mas. 5, 4, 6 (Recorrido IND)\n");
     pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "-Puedo borrar un nodo con dos hijos.");
     pa2m_afirmar(arbol->nodo_raiz->elemento == &e, "El hijo izquierdo se convierte en raiz.");
-    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &f, "La raiz (5) apunta al nodo que contiene al elemento (6).");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &f, "La raiz (5) apunta al nodo que contiene al elemento (6).");*/
 
-    
-    /*
-    arbol_insertar(arbol, &a);
-    arbol_insertar(arbol, &b);
-    arbol_insertar(arbol, &c);
-    arbol_insertar(arbol, &d);
-    arbol_insertar(arbol, &e);
-    arbol_insertar(arbol, &f);
-    arbol_insertar(arbol, &g);
-    printf("\n    -Vuelvo a insertar 7 elementos.\n");*/
-    /*          COMO QUEDARIA EL ARBOL
-                        a- 5
-                    /           \
-                b- 3            c- 7
-                /   \           /   \
-            d- 2    e- 4    f- 6    g- 8    
-    */
-   /*
-    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "Puedo borrar un nodo (5) con dos hijos. Cuyos hijos tambien tienen hijos.");
-    pa2m_afirmar(arbol->nodo_raiz->elemento == &e, "La raiz (5) pasa a ser el extremo derecho maximo (4).");
-    pa2m_afirmar(arbol->nodo_raiz->izquierda->derecha == NULL, "Se borra el nodo que moví previamente (4).");
-    pa2m_afirmar(arbol->nodo_raiz->izquierda->elemento == &b, "El nodo (3) esta en su lugar");
-    pa2m_afirmar(arbol->nodo_raiz->izquierda->izquierda->elemento == &d, "El nodo (2) esta en su lugar");
-    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &c, "El nodo (7) esta en su lugar");
-    pa2m_afirmar(arbol->nodo_raiz->derecha->izquierda->elemento == &f, "El nodo (6) esta en su lugar");
-    pa2m_afirmar(arbol->nodo_raiz->derecha->derecha->elemento == &g, "El nodo (8) esta en su lugar");*/
-
+    arbol_destruir(arbol);
 }
 
 
@@ -250,9 +229,12 @@ int main(){
     pa2m_nuevo_grupo("PRUEBAS DE BUSQUEDA");
     probar_buscar_en_arbol();
 
-    pa2m_nuevo_grupo("PRUEBAS DE BORRADO");
+    pa2m_nuevo_grupo("PRUEBAS DE BORRADO GENERAL");
     probar_borrar_en_arbol();
-    probar_borrar_en_arbol_2();
+    pa2m_nuevo_grupo("PRUEBAS DE BORRADO CON NODO DE DOS HIJOS HOJAS");
+    probar_borrar_nodo_con_dos_hijos_hojas();
+    pa2m_nuevo_grupo("PRUEBAS DE BORRADO CON NODO DE DOS HIJOS ARBOLES");
+    probar_borrar_nodo_con_dos_hijos_arboles();
 
     return pa2m_mostrar_reporte();
 } 
