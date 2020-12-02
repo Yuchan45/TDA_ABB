@@ -18,7 +18,8 @@ int comparar_manzanas_por_peso(void* manzana_1, void* manzana_2){
 }
 
 void destructor_de_manzanas(void* manzana){
-    free((manzana_t*)manzana);
+    if (manzana)
+        free((manzana_t*)manzana);
 }
 
 int comparador_numeros(void* elemento_1, void* elemento_2){
@@ -30,7 +31,8 @@ int comparador_numeros(void* elemento_1, void* elemento_2){
 }
 
 void destructor_de_numeros(void* numero){
-    free((int*)numero);
+    if (numero)
+        free((int*)numero);
 }
 
 
@@ -264,9 +266,21 @@ void probar_arbol_vacio(){
 
     arbol_destruir(arbol);
 }
-/*
+
+/* No hace falta probar el destructor xq no es parte del tda.
 void probar_destructor_de_numeros(){
-    
+    abb_t* arbol = arbol_crear(&comparador_numeros, destructor_de_numeros);
+    int* a = malloc(sizeof(int));
+    int* b = malloc(sizeof(int));
+    int* c = malloc(sizeof(int));
+    *a = 1;
+    *a = 2;
+    *a = 3;
+
+    arbol_insertar(arbol, a);
+    arbol_insertar(arbol, b);
+    arbol_insertar(arbol, c);
+    arbol_destruir(arbol);
 }
 void probar_destructor_de_manzanas(){
     
@@ -407,6 +421,9 @@ int main(){
 
     pa2m_nuevo_grupo("PRUEBAS DE ARBOL VACIO");
     probar_arbol_vacio();
+
+    pa2m_nuevo_grupo("PRUEBAS DE DESTRUCTOR DE NUMEROS");
+    probar_destructor_de_numeros();
 
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO INORDEN");
     probar_arbol_recorrido_inorden();
