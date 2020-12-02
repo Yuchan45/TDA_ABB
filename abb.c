@@ -95,7 +95,12 @@ nodo_abb_t* borrar_con_dos_hijos(nodo_abb_t* nodo, abb_liberar_elemento destruct
     if (nodo_aux->derecha != NULL){
         //printf("asdasdas\n\n\n");
         nodo_abb_t* nodo_extremo = hallar_nodo_extremo_derecho(nodo->izquierda);
-        nodo->izquierda->derecha = NULL; // Elimino el nodo/arbol extremo que recoloco.
+        if (nodo_extremo->izquierda){ // Si el nodo extremo a recolocar tiene hijo izquierdo.
+            nodo_aux->derecha = nodo_extremo->izquierda; // Le asigno el hijo izq del nodo a recolocar.
+        }else{
+            nodo_aux->derecha = NULL; 
+        }
+
         nodo_extremo->izquierda = nodo->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
         nodo_extremo->derecha = nodo->derecha;
         nodo_aux = nodo_extremo;
@@ -176,7 +181,7 @@ int arbol_borrar(abb_t* arbol, void* elemento){
 
 
 void* arbol_raiz(abb_t* arbol){
-    if(!arbol)
+    if(!arbol || !(arbol->nodo_raiz))
         return NULL;
     return arbol->nodo_raiz->elemento;
 }
@@ -272,9 +277,10 @@ size_t arbol_recorrido_postorden(abb_t* arbol, void** array, size_t tamanio_arra
  * y ABB_RECORRER_POSTORDEN.
  * Devuelve la cantidad de elementos que fueron recorridos.
 */
+/*
 size_t abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*, void*), void* extra){
     
-}
+}*/
 
 void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
     // Recorro los nodos y los voy cerrando de atras para adelante. Si no tengo hijos borro, si puedo avanar para izq avanzo, y si puedo avanzar para drcha avanzo.

@@ -110,7 +110,7 @@ void probar_buscar_en_arbol(){
 void probar_borrar_nodo_con_dos_hijos_arboles(){
     //printf("\n-Pruebo borrar un nodo con 2 hijos (y cuyo hijo izquierdo tiene uno o mas hijos derechos.)");
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
-    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+    int a = 5, b = 2, c = 1, d = 4, e = 3, f = 7, g = 6, h = 8;
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -118,27 +118,48 @@ void probar_borrar_nodo_con_dos_hijos_arboles(){
     arbol_insertar(arbol, &e);
     arbol_insertar(arbol, &f);
     arbol_insertar(arbol, &g);
-    printf("-Inserto 7 elementos.-\n");
+    arbol_insertar(arbol, &h);
+    printf("-Inserto 7 elementos en el siguiente orden: [5, 2, 1, 4, 3, 7, 6, 8]-\n");
     /*          COMO QUEDARIA EL ARBOL
                         a- 5
                     /           \
-                b- 3            c- 7
+                b- 2            f- 7
                 /   \           /   \
-            d- 2    e- 4    f- 6    g- 8    
+            c- 1    d- 4    g- 6    h- 8    
+                    /
+                e- 3
     */
-    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "-Puedo borrar un nodo con dos hijos. (Y su hijo izquierdo tiene un hijo derecho.)");
-    pa2m_afirmar(arbol->nodo_raiz->elemento == &e, "El nodo extremo derecho se convierte en raiz.");
-    pa2m_afirmar(arbol->nodo_raiz->izquierda->derecha == NULL, "Se borra el nodo extremo derecho.");
+    pa2m_afirmar(arbol_borrar(arbol, &f) == 0, "-Puedo borrar un nodo con dos hijos. (7)");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &g, "El nodo extremo derecho del nodo borrado toma el lugar del nodo borrado. (6) toma el lugar de (7).");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->izquierda == NULL, "El hijo izquierdo del nodo que tomo la posicion del borrado (6) apunta a NULL.\n");
     /*          COMO QUEDARIA EL ARBOL
-                        e- 4
+                        a- 5
                     /           \
-                b- 3            c- 7
-                /               /   \
-            d- 2             f- 6    g- 8    
+                b- 2            g- 6
+                /   \           /   \
+            c- 1    d- 4     NULL    h- 8    
+                    /
+                e- 3
     */
+    // Y que pasa si el nodo a recolocar (mayor de los menores) tiene un hijo izquierdo? 
+    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "-Puedo borrar un nodo con dos hijos (5). (Y su nodo tiene un hijo izquierdo.)");
+    pa2m_afirmar(arbol->nodo_raiz->elemento == &d, "El nodo extremo derecho (mayor de los menores) toma el lugar del nodo borrado. (4) toma el lugar de (5)");
+    pa2m_afirmar(arbol->nodo_raiz->izquierda->derecha->elemento == &e, "El hijo izquierdo del nodo extremo toma el lugar de su padre. (3) se coloca en el lugar que estaba (4)");
+    pa2m_afirmar(arbol->nodo_raiz->izquierda->derecha->izquierda == NULL, "El puntero hijo izquierdo del nodo (3) apunta a null.");
+    /*          COMO QUEDARIA EL ARBOL
+                        d- 4
+                    /           \
+                b- 2            g- 6
+                /   \           /   \
+            c- 1    e- 3     NULL    h- 8    
+                    /
+                NULL
+    */
+
 
    arbol_destruir(arbol);
 }   
+
 void probar_borrar_nodo_con_dos_hijos_hojas(){
     //printf("\n-Pruebo borrar un nodo con 2 hijos (hijos hojas)\n");
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
@@ -216,8 +237,45 @@ void probar_borrar_en_arbol(){
     arbol_destruir(arbol);
 }
 
+void probar_arbol_raiz(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5;
+
+    pa2m_afirmar(arbol_raiz(NULL) == NULL, "Si el arbol no existe devuelve NULL.");
+    pa2m_afirmar(arbol_raiz(arbol) == NULL, "Si el arbol esta vacio devuelve NULL.");
+
+    printf("  - Inserto 1 elemento -\n");
+    arbol_insertar(arbol, &a);
+    pa2m_afirmar(arbol_raiz(arbol) == &a, "El elemento de la raiz es correcto.");
+
+    arbol_destruir(arbol);
+}   
+
+void probar_arbol_vacio(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 5;
+
+    pa2m_afirmar(arbol_vacio(NULL) == true, "Si el arbol no existe devuelve true.");
+    pa2m_afirmar(arbol_vacio(arbol) == true, "Si el arbol esta vacio devuelve true.");
+
+    printf("  - Inserto 1 elemento -\n");
+    arbol_insertar(arbol, &a);
+    pa2m_afirmar(arbol_vacio(arbol) == false, "Si el arbol tiene un elemento devuelve false.");
+
+    arbol_destruir(arbol);
+}
+/*
+void probar_destructor_de_numeros(){
+    
+}
+void probar_destructor_de_manzanas(){
+    
+}
+*/
+
+
 void mostrar_array_de_numeros(void** array, int cantidad){
-    printf("ASI QUEDARIA EL ARRAY: \n");
+    printf("  -ASI QUEDARIA EL ARRAY: \n");
     printf("    [ ");
     for (int i = 0; i < cantidad; i++){
         printf("%i  ", *(int*)array[i]);
@@ -233,7 +291,8 @@ void probar_arbol_recorrido_inorden(){
     pa2m_afirmar(arbol_recorrido_inorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
     pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
     pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
-    printf("-Inserte 7 elementos en el arbol.\n");
+    printf("  -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf("  -Recorrido postorden completo correcto: [2, 3, 4, 5, 6, 7, 8] -\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -265,7 +324,8 @@ void probar_arbol_recorrido_preorden(){
     pa2m_afirmar(arbol_recorrido_preorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
     pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
     pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
-    printf("-Inserte 7 elementos en el arbol.\n");
+    printf("  -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf("  -Recorrido postorden completo correcto: [5, 3, 2, 4, 7, 6, 8] -\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -297,7 +357,8 @@ void probar_arbol_recorrido_postorden(){
     pa2m_afirmar(arbol_recorrido_postorden(NULL, array, 2) == 0, "Si el arbol es nulo devuelve 0.");
     pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
     pa2m_afirmar(arbol_recorrido_postorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
-    printf("-Inserte 7 elementos en el arbol.\n");
+    printf("  -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf("  -Recorrido postorden completo correcto: [2, 4, 3, 6, 8, 7, 5] -\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -340,6 +401,13 @@ int main(){
     probar_borrar_nodo_con_dos_hijos_hojas();
     pa2m_nuevo_grupo("PRUEBAS DE BORRADO CON NODO DE DOS HIJOS ARBOLES");
     probar_borrar_nodo_con_dos_hijos_arboles();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ARBOL RAIZ");
+    probar_arbol_raiz();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ARBOL VACIO");
+    probar_arbol_vacio();
+
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO INORDEN");
     probar_arbol_recorrido_inorden();
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO PREORDEN");
