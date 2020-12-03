@@ -266,6 +266,57 @@ size_t arbol_recorrido_postorden(abb_t* arbol, void** array, size_t tamanio_arra
     return elementos_insertados;
 }
 
+bool recorrer_nodos_inorden(nodo_abb_t* nodo, bool (*funcion)(void*, void*), void* extra, size_t* elementos_recorridos){
+    if (!nodo || !funcion || !elementos_recorridos)
+        return false;
+
+    bool fin = recorrer_nodos_inorden(nodo->izquierda, funcion, extra, elementos_recorridos);
+
+    if (!fin){
+        fin = (*funcion)(nodo->elemento, extra);
+        (*elementos_recorridos)++;
+    }
+    if (!fin)
+        fin = recorrer_nodos_inorden(nodo->derecha, funcion, extra, elementos_recorridos); 
+
+    return fin;
+}
+
+bool recorrer_nodos_preorden(nodo_abb_t* nodo, bool (*funcion)(void*, void*), void* extra, size_t* elementos_recorridos){
+    if (!nodo || !funcion || !elementos_recorridos)
+        return false;
+    bool fin;
+
+    fin = (*funcion)(nodo->elemento, extra);
+    (*elementos_recorridos)++;
+
+    if (!fin)
+        fin = recorrer_nodos_preorden(nodo->izquierda, funcion, extra, elementos_recorridos);
+
+    if (!fin)
+        fin = recorrer_nodos_preorden(nodo->derecha, funcion, extra, elementos_recorridos); 
+
+    return fin;
+}
+
+bool recorrer_nodos_postorden(nodo_abb_t* nodo, bool (*funcion)(void*, void*), void* extra, size_t* elementos_recorridos){
+    if (!nodo || !funcion || !elementos_recorridos)
+        return false;
+    bool fin;
+
+    fin = recorrer_nodos_postorden(nodo->izquierda, funcion, extra, elementos_recorridos);
+
+    if (!fin)
+        fin = recorrer_nodos_postorden(nodo->derecha, funcion, extra, elementos_recorridos); 
+
+    if (!fin){
+        fin = (*funcion)(nodo->elemento, extra);
+        (*elementos_recorridos)++;  
+    }    
+
+    return fin;
+}
+
 /*
  * Iterador interno. Recorre el arbol e invoca la funcion con cada
  * elemento del mismo. El puntero 'extra' se pasa como segundo
@@ -277,10 +328,22 @@ size_t arbol_recorrido_postorden(abb_t* arbol, void** array, size_t tamanio_arra
  * y ABB_RECORRER_POSTORDEN.
  * Devuelve la cantidad de elementos que fueron recorridos.
 */
-/*
+
 size_t abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*, void*), void* extra){
-    
-}*/
+    if (arbol_vacio(arbol) || !funcion)
+        return 0;
+
+    size_t elementos_recorridos = 0;
+    if (recorrido == ABB_RECORRER_INORDEN){
+        recorrer_nodos_inorden(arbol->nodo_raiz, funcion, extra, &elementos_recorridos);
+    }else if (recorrido == ABB_RECORRER_PREORDEN){
+        recorrer_nodos_preorden(arbol->nodo_raiz, funcion, extra, &elementos_recorridos);
+    }else if (recorrido == ABB_RECORRER_POSTORDEN){
+        recorrer_nodos_postorden(arbol->nodo_raiz, funcion, extra, &elementos_recorridos);
+    }
+
+    return elementos_recorridos;
+}
 
 void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
     // Recorro los nodos y los voy cerrando de atras para adelante. Si no tengo hijos borro, si puedo avanar para izq avanzo, y si puedo avanzar para drcha avanzo.

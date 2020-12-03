@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "pa2mm.h"
 
-/*               COMPARADORES Y DESTRUCTORES                */
+/*               COMPARADORES, DESTRUCTORES Y OTRAS FUNCIONES                */
 typedef struct{
     size_t tamanio;
     bool arenosa;
@@ -35,6 +35,19 @@ void destructor_de_numeros(void* numero){
         free((int*)numero);
 }
 
+bool mostrar_elemento_numero(void* elemento, void* extra){
+    if(elemento)
+        printf("     Elemento: %i \n", *(int*)elemento);
+    return false;
+}
+
+bool mostrar_hasta_el_cinco(void* elemento, void* extra){
+    if(elemento)
+        printf("     Elemento: %i \n", *(int*)elemento);
+    if (*(int*)elemento == 5)
+        return true;
+    return false;
+}
 
 /*****            PRUEBAS             *****/
 
@@ -47,8 +60,7 @@ void probar_crear_arbol(){
     pa2m_afirmar(arbol->nodo_raiz == NULL, "El arbol inicia con nodo_raíz igual a NULL");
     pa2m_afirmar(arbol->comparador == &comparador_numeros, "El comparador del árbol apunta al comparador recibido");
     pa2m_afirmar(arbol->destructor == &destructor_de_numeros, "El destructor del árbol apunta al destructor recibido");
-    
-    //Faltan los free.
+
     arbol_destruir(arbol);
 }
 
@@ -109,6 +121,7 @@ void probar_buscar_en_arbol(){
     // Pude encontrar la manzana buscada porque el comparador asociado al arbol se fija solo en el peso. Y como la manzana buscada y la manzana tienen el mismo peso..
     arbol_destruir(arbol);
 }
+
 void probar_borrar_nodo_con_dos_hijos_arboles(){
     //printf("\n-Pruebo borrar un nodo con 2 hijos (y cuyo hijo izquierdo tiene uno o mas hijos derechos.)");
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
@@ -176,6 +189,7 @@ void probar_borrar_nodo_con_dos_hijos_hojas(){
 
     arbol_destruir(arbol);
 }
+
 void probar_borrar_en_arbol(){
 
     abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
@@ -267,27 +281,6 @@ void probar_arbol_vacio(){
     arbol_destruir(arbol);
 }
 
-/* No hace falta probar el destructor xq no es parte del tda.
-void probar_destructor_de_numeros(){
-    abb_t* arbol = arbol_crear(&comparador_numeros, destructor_de_numeros);
-    int* a = malloc(sizeof(int));
-    int* b = malloc(sizeof(int));
-    int* c = malloc(sizeof(int));
-    *a = 1;
-    *a = 2;
-    *a = 3;
-
-    arbol_insertar(arbol, a);
-    arbol_insertar(arbol, b);
-    arbol_insertar(arbol, c);
-    arbol_destruir(arbol);
-}
-void probar_destructor_de_manzanas(){
-    
-}
-*/
-
-
 void mostrar_array_de_numeros(void** array, int cantidad){
     printf("  -ASI QUEDARIA EL ARRAY: \n");
     printf("    [ ");
@@ -306,7 +299,7 @@ void probar_arbol_recorrido_inorden(){
     pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
     pa2m_afirmar(arbol_recorrido_inorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
     printf("  -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
-    printf("  -Recorrido postorden completo correcto: [2, 3, 4, 5, 6, 7, 8] -\n");
+    printf("  -Recorrido inorden completo correcto: [2, 3, 4, 5, 6, 7, 8] -\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -339,7 +332,7 @@ void probar_arbol_recorrido_preorden(){
     pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 2) == 0, "Si el arbol esta vacio devuelve 0");
     pa2m_afirmar(arbol_recorrido_preorden(arbol, array, 0) == 0, "Si el tamanio del array es 0 devuelve 0.\n");
     printf("  -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
-    printf("  -Recorrido postorden completo correcto: [5, 3, 2, 4, 7, 6, 8] -\n");
+    printf("  -Recorrido preorden completo correcto: [5, 3, 2, 4, 7, 6, 8] -\n");
     arbol_insertar(arbol, &a);
     arbol_insertar(arbol, &b);
     arbol_insertar(arbol, &c);
@@ -396,6 +389,106 @@ void probar_arbol_recorrido_postorden(){
     arbol_destruir(arbol);
 }
 
+void probar_abb_con_cada_elemento_generales(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int extra = 0;
+    pa2m_afirmar(abb_con_cada_elemento(NULL, ABB_RECORRER_INORDEN, &mostrar_elemento_numero, &extra) == 0, "Recorrer un arbol inexistente deberia devolver 0.");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, NULL, &extra) == 0, "Si no hay funcion deberia devolver 0.");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, 10, &mostrar_elemento_numero, &extra) == 0, "Si el recorrido es invalido (10), deberia devolver 0.");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, 0, &mostrar_elemento_numero, &extra) == 0, "Si el arbol esta vacio, deberia recorrer 0 elementos.\n");
+    arbol_destruir(arbol);
+}
+
+void probar_abb_con_cada_elemento_inorden(){
+
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int extra = 0;
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    printf(" -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf(" -Recorrido inorden completo correcto: [2, 3, 4, 5, 6, 7, 8] -\n");
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+    printf("\n -Imprimo los elementos del arbol de manera INORDEN con la funcion: mostrar_elemento_numero()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, mostrar_elemento_numero, &extra) == 7, "Los elementos recorridos deberian ser 7. [2, 3, 4, 5, 6, 7, 8]");
+    printf("\n -Imprimo los elementos del arbol de manera INORDEN con la funcion: mostrar_hasta_el_cinco()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_INORDEN, mostrar_hasta_el_cinco, &extra) == 4, "Los elementos recorridos deberian ser 4. [2, 3, 4, 5]");
+
+   arbol_destruir(arbol);
+}
+
+void probar_abb_con_cada_elemento_preorden(){
+
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int extra = 0;
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    printf(" -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf(" -Recorrido preorden completo correcto: [5, 3, 2, 4, 7, 6, 8] -\n");
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+    printf("\n -Imprimo los elementos del arbol de manera PREORDEN con la funcion: mostrar_elemento_numero()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_PREORDEN, mostrar_elemento_numero, &extra) == 7, "Los elementos recorridos deberian ser 7. [5, 3, 2, 4, 7, 6, 8]");
+    printf("\n -Imprimo los elementos del arbol de manera PREORDEN con la funcion: mostrar_hasta_el_cinco()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_PREORDEN, mostrar_hasta_el_cinco, &extra) == 1, "Los elementos recorridos deberia ser 1 porque el cinco esta en el 1º nodo. [5]");
+
+   arbol_destruir(arbol);
+}
+
+void probar_abb_con_cada_elemento_postorden(){
+
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int extra = 0;
+    int a = 5, b = 3, c = 7, d = 2, e = 4, f = 6, g = 8;
+
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+    printf(" -Inserte 7 elementos en el arbol en el siguiente orden: [5, 3, 7, 2, 4, 6, 8] -\n");
+    printf(" -Recorrido postorden completo correcto: [2, 4, 3, 6, 8, 7, 5] -\n");
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 5
+                    /           \
+                b- 3            c- 7
+                /   \           /   \
+            d- 2    e- 4    f- 6    g- 8    
+    */
+    printf("\n -Imprimo los elementos del arbol de manera POSTORDEN con la funcion: mostrar_elemento_numero()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_POSTORDEN, mostrar_elemento_numero, &extra) == 7, "Los elementos recorridos deberian ser 7. [2, 4, 3, 6, 8, 7, 5]");
+    printf("\n -Imprimo los elementos del arbol de manera POSTORDEN con la funcion: mostrar_hasta_el_cinco()\n");
+    pa2m_afirmar(abb_con_cada_elemento(arbol, ABB_RECORRER_POSTORDEN, mostrar_hasta_el_cinco, &extra) == 7, "Los elementos recorridos deberian ser 7 porque el cinco esta en el ultimo nodo. [2, 4, 3, 6, 8, 7, 5]");
+
+   arbol_destruir(arbol);
+}
+
 
 int main(){
     /*PRUEBAS*/
@@ -418,12 +511,8 @@ int main(){
 
     pa2m_nuevo_grupo("PRUEBAS DE ARBOL RAIZ");
     probar_arbol_raiz();
-
     pa2m_nuevo_grupo("PRUEBAS DE ARBOL VACIO");
     probar_arbol_vacio();
-
-    pa2m_nuevo_grupo("PRUEBAS DE DESTRUCTOR DE NUMEROS");
-    probar_destructor_de_numeros();
 
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO INORDEN");
     probar_arbol_recorrido_inorden();
@@ -431,6 +520,18 @@ int main(){
     probar_arbol_recorrido_preorden();
     pa2m_nuevo_grupo("PRUEBAS DE RECORRIDO POSTORDEN");
     probar_arbol_recorrido_postorden();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ITERADOR GENERALES");
+    probar_abb_con_cada_elemento_generales();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ITERADOR INORDEN");
+    probar_abb_con_cada_elemento_inorden();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ITERADOR PREORDEN");
+    probar_abb_con_cada_elemento_preorden();
+
+    pa2m_nuevo_grupo("PRUEBAS DE ITERADOR POSTORDEN");
+    probar_abb_con_cada_elemento_postorden();
 
     return pa2m_mostrar_reporte();
 } 
