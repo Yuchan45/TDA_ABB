@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 
+/*      CREAR      */
 abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
     if(!comparador)
         return NULL;
@@ -17,6 +18,7 @@ abb_t* arbol_crear(abb_comparador comparador, abb_liberar_elemento destructor){
 }
 
 
+/*      INSERTAR      */
 nodo_abb_t* nodo_insertar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
 
     if(!nodo){
@@ -50,6 +52,8 @@ int arbol_insertar(abb_t* arbol, void* elemento){
 
 }
 
+
+/*      BUSCAR      */
 void* nodo_buscar(nodo_abb_t* nodo, void* elemento, abb_comparador comparador){
     if(!comparador)
         return NULL;
@@ -77,6 +81,9 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
     return elemento_buscado;
 }
 
+
+
+/*      BORRAR      */
 nodo_abb_t* hallar_nodo_extremo_derecho(nodo_abb_t* nodo){
     // A esta funcion, le pasas el nodo hijo izquierdo y lo que hace es recorrer todo el lado derecho del hijo y retorna el ultimo(maximo) nodo del lado derecho.
     if(!nodo)
@@ -180,18 +187,23 @@ int arbol_borrar(abb_t* arbol, void* elemento){
 }
 
 
+/*      RAIZ      */
 void* arbol_raiz(abb_t* arbol){
     if(!arbol || !(arbol->nodo_raiz))
         return NULL;
     return arbol->nodo_raiz->elemento;
 }
 
+
+/*      ARBOL_VACIO      */
 bool arbol_vacio(abb_t* arbol){
     if(!arbol || !(arbol->nodo_raiz))
         return true;
     return false;
 }
 
+
+/*      RECORRIDO INORDEN       */
 void insertar_elementos_inorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
     // (IND)
     if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
@@ -216,6 +228,8 @@ size_t arbol_recorrido_inorden(abb_t* arbol, void** array, size_t tamanio_array)
     return elementos_insertados;
 }
 
+
+/*      RECORRIDO PREORDEN       */
 void insertar_elementos_preorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
     // (NID)
     if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
@@ -242,6 +256,7 @@ size_t arbol_recorrido_preorden(abb_t* arbol, void** array, size_t tamanio_array
 }
 
 
+/*      RECORRIDO POSTORDEN       */
 void insertar_elementos_postorden(nodo_abb_t* nodo, void** array, size_t tamanio_array, size_t* elementos_insertados){
     // (IDN)
     if (!nodo || *elementos_insertados >= tamanio_array) // Condicion de stop.
@@ -266,6 +281,8 @@ size_t arbol_recorrido_postorden(abb_t* arbol, void** array, size_t tamanio_arra
     return elementos_insertados;
 }
 
+
+/*      ITERADORES      */
 bool recorrer_nodos_inorden(nodo_abb_t* nodo, bool (*funcion)(void*, void*), void* extra, size_t* elementos_recorridos){
     if (!nodo || !funcion || !elementos_recorridos)
         return false;
@@ -317,18 +334,6 @@ bool recorrer_nodos_postorden(nodo_abb_t* nodo, bool (*funcion)(void*, void*), v
     return fin;
 }
 
-/*
- * Iterador interno. Recorre el arbol e invoca la funcion con cada
- * elemento del mismo. El puntero 'extra' se pasa como segundo
- * parámetro a la función. Si la función devuelve true, se finaliza el
- * recorrido aun si quedan elementos por recorrer. Si devuelve false
- * se sigue recorriendo mientras queden elementos.
- * El recorrido se realiza de acuerdo al recorrido solicitado.  Los
- * recorridos válidos son: ABB_RECORRER_INORDEN, ABB_RECORRER_PREORDEN
- * y ABB_RECORRER_POSTORDEN.
- * Devuelve la cantidad de elementos que fueron recorridos.
-*/
-
 size_t abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*, void*), void* extra){
     if (arbol_vacio(arbol) || !funcion)
         return 0;
@@ -345,6 +350,8 @@ size_t abb_con_cada_elemento(abb_t* arbol, int recorrido, bool (*funcion)(void*,
     return elementos_recorridos;
 }
 
+
+/*      ARBOL DESTRUIR      */
 void nodo_liberar(nodo_abb_t* nodo, abb_liberar_elemento destructor){
     // Recorro los nodos y los voy cerrando de atras para adelante. Si no tengo hijos borro, si puedo avanar para izq avanzo, y si puedo avanzar para drcha avanzo.
     if (!nodo)
