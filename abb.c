@@ -84,12 +84,12 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
 
 
 /*      BORRAR      */
-nodo_abb_t* hallar_nodo_extremo_derecho(nodo_abb_t* nodo){
-    // A esta funcion, le pasas el nodo hijo izquierdo y lo que hace es recorrer todo el lado derecho del hijo y retorna el ultimo(maximo) nodo del lado derecho.
+nodo_abb_t* hallar_padre_nodo_extremo_derecho(nodo_abb_t* nodo){
+    // Esta funcion retorna el padre del nodo extremo (mayor de los menores).
     if(!nodo)
         return NULL;
-    if(nodo->derecha){
-        return hallar_nodo_extremo_derecho(nodo->derecha); //Si tiene hijo derecho, segui.
+    if(nodo->derecha->derecha){
+        return hallar_padre_nodo_extremo_derecho(nodo->derecha); //Si tiene hijo derecho, segui.
     }else{
         return nodo; // Halle el maximo.
     }
@@ -99,24 +99,24 @@ nodo_abb_t* borrar_con_dos_hijos(nodo_abb_t* nodo, abb_liberar_elemento destruct
     nodo_abb_t* nodo_aux = nodo->izquierda;
     //printf("%i\n", *(int*)nodo_aux->elemento);
 
-    if (nodo_aux->derecha != NULL){
-        //printf("asdasdas\n\n\n");
-        nodo_abb_t* nodo_extremo = hallar_nodo_extremo_derecho(nodo->izquierda);
-        if (nodo_extremo->izquierda){ // Si el nodo extremo a recolocar tiene hijo izquierdo.
-            nodo_aux->derecha = nodo_extremo->izquierda; // Le asigno el hijo izq del nodo a recolocar.
+    if (nodo_aux->derecha != NULL){ // Si el nodo izquierdo del nodo a borrar tiene hijos derechos.
+
+        nodo_abb_t* nodo_padre = hallar_padre_nodo_extremo_derecho(nodo->izquierda);
+        nodo_abb_t* nodo_a_recolocar = nodo_padre->derecha;
+        if (nodo_a_recolocar->izquierda){ // Si el nodo extremo a recolocar tiene hijo izquierdo.
+            nodo_padre->derecha = nodo_a_recolocar->izquierda; // Le asigno el hijo izq del nodo a recolocar.
         }else{
-            nodo_aux->derecha = NULL; 
+            nodo_padre->derecha = NULL; 
         }
 
-        nodo_extremo->izquierda = nodo->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
-        nodo_extremo->derecha = nodo->derecha;
-        nodo_aux = nodo_extremo;
+        nodo_a_recolocar->izquierda = nodo->izquierda; // Y al nodo extremo lo pongo en el lugar del nodo borrado.
+        nodo_a_recolocar->derecha = nodo->derecha;
+        nodo_aux = nodo_a_recolocar; //Xq lo que retorno es el nodo_aux.
 
     }else{ 
         //printf("%i\n", *(int*)nodo_aux->elemento);
         nodo_aux->derecha = nodo->derecha;
 
-        //nodo->izquierda->derecha = nodo->derecha;
     }
 
     if (destructor)
