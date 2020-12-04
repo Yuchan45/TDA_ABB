@@ -614,15 +614,19 @@ void probar_borrar_nodos_con_dos_hijos(){
                 /            
             c- 1                  
     */
-    printf("Borro el nodo (1) para probar un tipo de borrado.\n");
-    arbol_borrar(arbol, &c);
-    /*          COMO QUEDARIA EL ARBOL
-                        e- 3
-                    /           \
-                b- 2            g- 9               
-    */
     pa2m_afirmar(arbol_borrar(arbol, &e) == 0, "-Puedo borrar un nodo con dos hijos (3).");
     pa2m_afirmar(arbol->nodo_raiz->elemento == &b, "El nodo, mayor de los menores, (2) toma el lugar del nodo borrado (3)");
+    pa2m_afirmar(arbol->nodo_raiz->izquierda->elemento == &c, "El hijo izquierdo del nuevo nodo raiz es correcto.");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &g, "El hijo izquierdo del nuevo nodo raiz es correcto.");
+
+
+    /*          COMO QUEDARIA EL ARBOL
+                        b- 2
+                    /           \
+                c-1            g- 9               
+    */
+    pa2m_afirmar(arbol_borrar(arbol, &b) == 0, "-Puedo borrar un nodo con dos hijos (2).");
+    pa2m_afirmar(arbol->nodo_raiz->elemento == &c, "El nodo, mayor de los menores, (1) toma el lugar del nodo borrado (2)");
     pa2m_afirmar(arbol->nodo_raiz->izquierda == NULL, "El hijo izquierdo del nuevo nodo raiz es null.");
     pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &g, "El hijo izquierdo del nuevo nodo raiz es correcto.");
 
