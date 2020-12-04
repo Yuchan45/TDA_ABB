@@ -51,7 +51,7 @@ bool mostrar_hasta_el_cinco(void* elemento, void* extra){
 /*
 nodo_abb_t* hallar_padre_nodo_extremo_derecho(nodo_abb_t* nodo){
     // Esta funcion retorna el padre del nodo extremo (mayor de los menores).
-    if(!nodo)
+    if(!nodo || !(nodo->derecha))
         return NULL;
     if(nodo->derecha->derecha){
         return hallar_padre_nodo_extremo_derecho(nodo->derecha); //Si tiene hijo derecho, segui.
@@ -59,6 +59,40 @@ nodo_abb_t* hallar_padre_nodo_extremo_derecho(nodo_abb_t* nodo){
         return nodo; // Halle el maximo.
     }
 }*/
+
+/*
+void probar_hallar_padre_nodo_extremo_derecho(){
+    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
+    int a = 8, b = 2, c = 1, d = 5, e = 3, f = 7, g = 9;
+    arbol_insertar(arbol, &a);
+    arbol_insertar(arbol, &b);
+    arbol_insertar(arbol, &c);
+    arbol_insertar(arbol, &d);
+    arbol_insertar(arbol, &e);
+    arbol_insertar(arbol, &f);
+    arbol_insertar(arbol, &g);
+
+    printf("\n *Inserto 7 elementos el el siguiente orden: [8, 2, 1, 5, 3, 7, 9]-\n");*/
+    /*          COMO QUEDARIA EL ARBOL
+                        a- 8
+                    /           \
+                b- 2            g- 9
+                /   \         
+            c- 1     d- 5         
+                    /    \
+                e- 3     f- 7
+    */
+/*
+    nodo_abb_t* nodo_padre = hallar_padre_nodo_extremo_derecho(arbol->nodo_raiz->izquierda);
+    //printf("%i\n", *(int*)nodo_padre->elemento);
+    pa2m_afirmar(nodo_padre->elemento == &d, "El nodo padre del nodo (mayor de los menores) es correcto.");
+    arbol_borrar(arbol, &f);
+    printf(" -Elimine el nodo 7 para realizar una nueva prueba.\n");
+    nodo_padre = hallar_padre_nodo_extremo_derecho(arbol->nodo_raiz->izquierda);
+    pa2m_afirmar(nodo_padre->elemento == &b, "El nodo padre del nodo (mayor de los menores) es correcto.");
+    arbol_destruir(arbol);
+}*/
+
 
 /*****            PRUEBAS             *****/
 
@@ -132,15 +166,6 @@ void probar_buscar_en_arbol(){
     // Pude encontrar la manzana buscada porque el comparador asociado al arbol se fija solo en el peso. Y como la manzana buscada y la manzana tienen el mismo peso..
     arbol_destruir(arbol);
 }
-
-/*
-void probar_borrar_raiz_varias_veces(){
-    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
-    int a = 5, b = 3, c = 7;
-    arbol_insertar(arbol, &a);
-    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "Puedo borrar la raiz del arbol.");
-    
-}*/
 
 
 void probar_arbol_raiz(){
@@ -435,6 +460,15 @@ void probar_borrar_en_arbol(){
                     /           \
                 e- 4            f- 6                             
     */
+    pa2m_afirmar(arbol_borrar(arbol, &a) == 0, "-Puedo borrar un nodo con dos hijos.");
+    pa2m_afirmar(arbol->nodo_raiz->elemento == &e, "El elemento hijo izquierdo del nodo borrado toma el lugar del elemento borrado.");
+    pa2m_afirmar(arbol->nodo_raiz->izquierda == NULL, "El nodo raiz ya no tiene hijo izquierdo");
+    pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &f, "El nodo raiz tiene de hijo derecho a (6)");
+    /*          COMO QUEDARIA EL ARBOL
+                        e- 4
+                    /           \
+                NULL            f- 6                             
+    */
     arbol_destruir(arbol);
 }
 
@@ -629,45 +663,20 @@ void probar_borrar_nodos_con_dos_hijos(){
     pa2m_afirmar(arbol->nodo_raiz->elemento == &c, "El nodo, mayor de los menores, (1) toma el lugar del nodo borrado (2)");
     pa2m_afirmar(arbol->nodo_raiz->izquierda == NULL, "El hijo izquierdo del nuevo nodo raiz es null.");
     pa2m_afirmar(arbol->nodo_raiz->derecha->elemento == &g, "El hijo izquierdo del nuevo nodo raiz es correcto.");
-
-    arbol_destruir(arbol);
-}
-/*
-void probar_hallar_padre_nodo_extremo_derecho(){
-    abb_t* arbol = arbol_crear(&comparador_numeros, NULL);
-    int a = 8, b = 2, c = 1, d = 5, e = 3, f = 7, g = 9;
-    arbol_insertar(arbol, &a);
-    arbol_insertar(arbol, &b);
-    arbol_insertar(arbol, &c);
-    arbol_insertar(arbol, &d);
-    arbol_insertar(arbol, &e);
-    arbol_insertar(arbol, &f);
-    arbol_insertar(arbol, &g);
-
-    printf("\n *Inserto 7 elementos el el siguiente orden: [8, 2, 1, 5, 3, 7, 9]-\n");*/
     /*          COMO QUEDARIA EL ARBOL
-                        a- 8
+                        c-1
                     /           \
-                b- 2            g- 9
-                /   \         
-            c- 1     d- 5         
-                    /    \
-                e- 3     f- 7
+                NULL            g- 9               
     */
-/*
-    nodo_abb_t* nodo_padre = hallar_padre_nodo_extremo_derecho(arbol->nodo_raiz->izquierda);
-    //printf("%i\n", *(int*)nodo_padre->elemento);
-    pa2m_afirmar(nodo_padre->elemento == &d, "El nodo padre del nodo (mayor de los menores) es correcto.");
-    arbol_borrar(arbol, &f);
-    printf(" -Elimine el nodo 7 para realizar una nueva prueba.\n");
-    nodo_padre = hallar_padre_nodo_extremo_derecho(arbol->nodo_raiz->izquierda);
-    pa2m_afirmar(nodo_padre->elemento == &b, "El nodo padre del nodo (mayor de los menores) es correcto.");
+
     arbol_destruir(arbol);
 }
-*/
+
+
 
 int main(){
     /*PRUEBAS*/
+
     pa2m_nuevo_grupo("PRUEBAS DE CREACION DE ARBOL");
     probar_crear_arbol();
 
@@ -677,7 +686,6 @@ int main(){
     pa2m_nuevo_grupo("PRUEBAS DE BUSQUEDA");
     probar_buscar_en_arbol();
 
-    
     pa2m_nuevo_grupo("PRUEBAS DE BORRADO GENERAL");
     probar_borrar_en_arbol();
     pa2m_nuevo_grupo("PRUEBAS DE BORRADO DE HOJAS");
@@ -686,7 +694,6 @@ int main(){
     probar_borrar_nodos_con_un_hijo();
     pa2m_nuevo_grupo("PRUEBAS DE BORRADO DE NODOS CON DOS HIJOS");
     probar_borrar_nodos_con_dos_hijos();
-
 
     pa2m_nuevo_grupo("PRUEBAS DE ARBOL RAIZ");
     probar_arbol_raiz();
@@ -702,18 +709,13 @@ int main(){
 
     pa2m_nuevo_grupo("PRUEBAS DE ITERADOR GENERALES");
     probar_abb_con_cada_elemento_generales();
-
     pa2m_nuevo_grupo("PRUEBAS DE ITERADOR INORDEN");
     probar_abb_con_cada_elemento_inorden();
-
     pa2m_nuevo_grupo("PRUEBAS DE ITERADOR PREORDEN");
     probar_abb_con_cada_elemento_preorden();
-
     pa2m_nuevo_grupo("PRUEBAS DE ITERADOR POSTORDEN");
     probar_abb_con_cada_elemento_postorden();
 
-    
-    
     //pa2m_nuevo_grupo("PRUEBAS DE HALLAR PADRE DEL NODO (MAYOR DE LOS MENORES)");
     //probar_hallar_padre_nodo_extremo_derecho();
 
