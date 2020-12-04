@@ -82,7 +82,6 @@ void* arbol_buscar(abb_t* arbol, void* elemento){
 }
 
 
-
 /*      BORRAR      */
 
 nodo_abb_t* hallar_padre_nodo_extremo_derecho(nodo_abb_t* nodo){
